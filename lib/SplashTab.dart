@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'Register.dart';
+import 'HomeTab.dart'; // Make sure you have this import for the HomePage
 
 class SplashPage extends StatefulWidget {
   @override
@@ -10,12 +12,23 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () {
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    await Future.delayed(Duration(seconds: 3)); // Wait for 3 seconds
+
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // User is logged in, navigate to home page with user ID
+      Navigator.pushReplacementNamed(context, '/home', arguments: user.uid);
+    } else {
+      // User is not logged in, navigate to register page
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => Register()),
+        MaterialPageRoute(builder: (_) => RegisterPage()),
       );
-    });
+    }
   }
 
   @override
@@ -53,7 +66,7 @@ class WelcomeSplash extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Text(
-                "blue planet",
+                "Blue Planet",
                 style: TextStyle(
                   fontSize: 40,
                   color: Colors.white,
